@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>设置 - Keke Study Analysis</title>
+    <link rel="icon" href="icon.png" type="image/png">
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        // 加载背景图
+        function loadBackgroundImage() {
+            $.ajax({
+                url: 'https://api.yaohud.cn/api/acg/adaptive',
+                data: {
+                    key: '1bXi46YPmRrWHMSM5oI'
+                },
+                type: 'GET',
+                dataType: 'json',
+                success: function(data) {
+                    if (data && data.data && data.data.url) {
+                        document.body.style.backgroundImage = `url(${data.data.url})`;
+                    }
+                },
+                timeout: 3000,
+                error: function(data) {
+                    console.log('请求失败，使用默认背景');
+                    // 请求失败时使用默认背景
+                    document.body.style.backgroundImage = 'url(https://www.loliapi.com/acg/)';
+                }
+            });
+        }
+        
+        // 页面加载时加载背景图
+        window.addEventListener('load', loadBackgroundImage);
+    </script>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <h1>Keke Study Analysis</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="index.html">首页</a></li>
+                    <li><a href="input.html">成绩输入</a></li>
+                    <li><a href="analysis.html">成绩分析</a></li>
+                    <li><a href="settings.html">设置</a></li>
+                    <li><a href="about.html">关于我们</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    <main>
+        <section class="input-section">
+            <div class="container">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+                    <h2>系统设置</h2>
+                    <button class="btn" onclick="toggleDarkMode()" id="darkModeToggle">切换到暗色模式</button>
+                </div>
+                
+                <!-- 字体设置卡片 -->
+                <div class="card" style="margin-bottom: 30px; animation-delay: 0.2s;">
+                    <h3>字体设置</h3>
+                    <p>选择网站显示的字体</p>
+                    <div style="margin-top: 20px;">
+                        <div style="margin-bottom: 15px;">
+                            <label for="font-select" style="display: block; margin-bottom: 8px; font-weight: bold; color: #4a6fa5; text-shadow: 1px 1px 2px rgba(255,255,255,0.8);">选择字体</label>
+                            <select id="font-select" style="padding: 10px 16px; border-radius: 20px; border: none; background: rgba(74, 111, 165, 0.8); color: white; cursor: pointer; min-width: 200px; transition: all 0.3s ease-out;">
+                                <option value="SourceHanSans">默认字体 (SourceHanSans)</option>
+                                <option value="JinNianYeYaoJiaYouYa">今年也要加油鸭</option>
+                                <option value="PingFangJiangNanTi">平方江南体</option>
+                            </select>
+                        </div>
+                        <div style="margin-top: 20px;">
+                            <p style="margin-bottom: 10px; font-weight: bold; color: #4a6fa5; text-shadow: 1px 1px 2px rgba(255,255,255,0.8);">字体预览</p>
+                            <div id="font-preview" style="padding: 20px; background: rgba(255, 255, 255, 0.5); backdrop-filter: blur(5px); border-radius: 15px; text-align: center; font-size: 18px; min-height: 80px; display: flex; align-items: center; justify-content: center;">
+                                柯柯是一个可爱的女孩子
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 成绩数据管理卡片 -->
+                <div class="card" style="margin-bottom: 30px; animation-delay: 0.3s;">
+                    <h3>成绩数据管理</h3>
+                    <p>管理您的成绩数据，包括导出和导入功能</p>
+                    <div style="display: flex; gap: 15px; margin-top: 20px;">
+                        <button class="btn btn-primary" onclick="exportGrades()">导出成绩</button>
+                        <button class="btn" onclick="importGrades()">导入成绩</button>
+                        <input type="file" id="importFile" style="display: none;" accept=".json" onchange="handleFileImport(event)">
+                    </div>
+                </div>
+                
+                <!-- 数据清除卡片 -->
+                <div class="card" style="margin-bottom: 30px; animation-delay: 0.5s;">
+                    <h3>数据清除</h3>
+                    <p>清除所有本地保存的成绩数据</p>
+                    <div style="margin-top: 20px;">
+                        <button class="btn" onclick="clearAllData()" style="background: rgba(255, 107, 107, 0.8);">清除所有数据</button>
+                    </div>
+                </div>
+                
+                <!-- 关于本系统卡片 -->
+                <div class="card" style="animation-delay: 0.7s;">
+                    <h3>关于本系统</h3>
+                    <div class="about-info">
+                        <p>版本：1.0.0</p>
+                        <p>作者：落梦陳</p>
+                        <p>网站：<a href="https://keke-study-analysis.com" target="_blank">https://keke-study-analysis.com</a></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 Keke Study Analysis. 保留所有权利。</p>
+        </div>
+    </footer>
+    <script>
+        // 导出成绩功能
+        function exportGrades() {
+            // 获取所有成绩数据
+            const grades = JSON.parse(localStorage.getItem('grades')) || [];
+            const subjectScores = JSON.parse(localStorage.getItem('subjectScores')) || {};
+            const selectedSubjects = JSON.parse(localStorage.getItem('selectedSubjects')) || ['语文', '数学', '英语'];
+            const scoreLimits = JSON.parse(localStorage.getItem('scoreLimits')) || {
+                '语文': 150,
+                '数学': 150,
+                '英语': 150,
+                '物理': 100,
+                '化学': 100,
+                '生物': 100,
+                '历史': 100,
+                '地理': 100,
+                '政治': 100
+            };
+            
+            // 获取浏览器信息
+            const browserInfo = {
+                name: navigator.appName,
+                version: navigator.appVersion,
+                userAgent: navigator.userAgent
+            };
+            
+            // 获取系统信息
+            const systemInfo = {
+                platform: navigator.platform,
+                language: navigator.language
+            };
+            
+            // 构建导出数据
+            const exportData = {
+                exportTime: new Date().toISOString(),
+                subjects: selectedSubjects,
+                scoreLimits: scoreLimits,
+                grades: grades,
+                subjectScores: subjectScores,
+                browser: browserInfo,
+                system: systemInfo,
+                website: 'https://keke-study-analysis.com', // 待定
+                author: '落梦陳',
+                version: '1.0.0'
+            };
+            
+            // 转换为JSON字符串
+            const jsonString = JSON.stringify(exportData, null, 2);
+            
+            // 创建Blob对象
+            const blob = new Blob([jsonString], { type: 'application/json' });
+            
+            // 创建下载链接
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `grades_${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+        
+        // 导入成绩功能
+        function importGrades() {
+            document.getElementById('importFile').click();
+        }
+        
+        // 处理文件导入
+        function handleFileImport(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const importedData = JSON.parse(e.target.result);
+                    
+                    // 保存导入的数据
+                    if (importedData.subjects) {
+                        localStorage.setItem('selectedSubjects', JSON.stringify(importedData.subjects));
+                    }
+                    if (importedData.scoreLimits) {
+                        localStorage.setItem('scoreLimits', JSON.stringify(importedData.scoreLimits));
+                    }
+                    
+                    // 合并成绩数据
+                    if (importedData.grades && Array.isArray(importedData.grades)) {
+                        const existingGrades = JSON.parse(localStorage.getItem('grades')) || [];
+                        const mergedGrades = [...existingGrades, ...importedData.grades];
+                        localStorage.setItem('grades', JSON.stringify(mergedGrades));
+                    }
+                    
+                    // 合并subjectScores数据
+                    if (importedData.subjectScores && typeof importedData.subjectScores === 'object') {
+                        const existingSubjectScores = JSON.parse(localStorage.getItem('subjectScores')) || {};
+                        const mergedSubjectScores = { ...existingSubjectScores };
+                        
+                        // 合并每个科目的成绩
+                        Object.entries(importedData.subjectScores).forEach(([subject, scores]) => {
+                            if (Array.isArray(scores)) {
+                                if (!mergedSubjectScores[subject]) {
+                                    mergedSubjectScores[subject] = [];
+                                }
+                                // 合并成绩数组，保留所有成绩（包括重复的）
+                                mergedSubjectScores[subject] = [...mergedSubjectScores[subject], ...scores];
+                            }
+                        });
+                        
+                        localStorage.setItem('subjectScores', JSON.stringify(mergedSubjectScores));
+                    }
+                    
+                    alert('成绩导入成功！');
+                } catch (error) {
+                    alert('导入文件解析失败，请确保文件为有效的JSON格式。');
+                    console.error('Import error:', error);
+                }
+            };
+            reader.readAsText(file);
+            
+            // 重置文件输入
+            event.target.value = '';
+        }
+        
+        // 暗色模式切换
+        function toggleDarkMode() {
+            const isDarkMode = document.body.classList.toggle('dark-mode');
+            localStorage.setItem('darkMode', isDarkMode);
+            
+            const darkModeToggle = document.getElementById('darkModeToggle');
+            if (isDarkMode) {
+                darkModeToggle.textContent = '切换到亮色模式';
+                darkModeToggle.style.background = 'rgba(74, 111, 165, 0.8)';
+            } else {
+                darkModeToggle.textContent = '切换到暗色模式';
+                darkModeToggle.style.background = 'rgba(255, 107, 157, 0.8)';
+            }
+        }
+        
+        // 加载暗色模式状态
+        function loadDarkMode() {
+            const isDarkMode = localStorage.getItem('darkMode') === 'true';
+            if (isDarkMode) {
+                document.body.classList.add('dark-mode');
+                const darkModeToggle = document.getElementById('darkModeToggle');
+                if (darkModeToggle) {
+                    darkModeToggle.textContent = '切换到亮色模式';
+                    darkModeToggle.style.background = 'rgba(74, 111, 165, 0.8)';
+                }
+            }
+        }
+        
+        // 字体设置
+        function initFontSettings() {
+            const fontSelect = document.getElementById('font-select');
+            const fontPreview = document.getElementById('font-preview');
+            
+            // 加载保存的字体设置
+            const savedFont = localStorage.getItem('selectedFont') || 'SourceHanSans';
+            fontSelect.value = savedFont;
+            updateFontPreview(savedFont);
+            applyFontToBody(savedFont);
+            
+            // 字体选择事件
+            if (fontSelect) {
+                fontSelect.addEventListener('change', function() {
+                    const selectedFont = this.value;
+                    localStorage.setItem('selectedFont', selectedFont);
+                    updateFontPreview(selectedFont);
+                    applyFontToBody(selectedFont);
+                });
+            }
+        }
+        
+        // 更新字体预览
+        function updateFontPreview(fontFamily) {
+            const fontPreview = document.getElementById('font-preview');
+            if (fontPreview) {
+                fontPreview.style.fontFamily = fontFamily;
+            }
+        }
+        
+        // 应用字体到整个页面
+        function applyFontToBody(fontFamily) {
+            document.body.style.fontFamily = `${fontFamily}, 'Comic Sans MS', 'Arial', sans-serif`;
+        }
+        
+        // 加载字体设置
+        function loadFontSettings() {
+            const savedFont = localStorage.getItem('selectedFont') || 'SourceHanSans';
+            applyFontToBody(savedFont);
+        }
+        
+        // 页面加载时检查设置
+        window.addEventListener('load', function() {
+            loadDarkMode();
+            initFontSettings();
+            // 添加loaded类，实现平滑过渡
+            setTimeout(function() {
+                document.body.classList.add('loaded');
+            }, 100);
+        });
+        
+        // 页面开始加载时移除loaded类
+        window.addEventListener('beforeunload', function() {
+            document.body.classList.remove('loaded');
+        });
+        
+        // 清除所有数据
+        function clearAllData() {
+            // 创建自定义确认弹窗
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.7);
+                backdrop-filter: blur(5px);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 1000;
+                animation: fadeIn 0.5s ease-out;
+            `;
+            
+            // 创建弹窗内容
+            const modalContent = document.createElement('div');
+            modalContent.style.cssText = `
+                background: ${document.body.classList.contains('dark-mode') ? 'rgba(40, 40, 40, 0.9)' : 'rgba(255, 255, 255, 0.9)'};
+                backdrop-filter: blur(10px);
+                padding: 40px;
+                border-radius: 20px;
+                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+                width: 90%;
+                max-width: 500px;
+                animation: slideInRight 0.5s ease-out;
+            `;
+            
+            // 弹窗标题
+            const modalTitle = document.createElement('h3');
+            modalTitle.textContent = '清除所有数据';
+            modalTitle.style.cssText = `
+                color: ${document.body.classList.contains('dark-mode') ? '#ff85b3' : '#ff6b9d'};
+                margin-bottom: 20px;
+                text-align: center;
+                font-size: 24px;
+                text-shadow: ${document.body.classList.contains('dark-mode') ? '1px 1px 2px rgba(0,0,0,0.8)' : '1px 1px 2px rgba(255,255,255,0.8)'};
+            `;
+            
+            // 弹窗提示信息
+            const modalMessage = document.createElement('p');
+            modalMessage.textContent = '确定要清除所有本地保存的成绩数据吗？此操作不可恢复。';
+            modalMessage.style.cssText = `
+                color: ${document.body.classList.contains('dark-mode') ? '#ddd' : '#333'};
+                margin-bottom: 30px;
+                text-align: center;
+                font-weight: bold;
+                text-shadow: ${document.body.classList.contains('dark-mode') ? '1px 1px 2px rgba(0,0,0,0.8)' : '1px 1px 2px rgba(255,255,255,0.8)'};
+            `;
+            
+            // 按钮容器
+            const buttonsContainer = document.createElement('div');
+            buttonsContainer.style.cssText = `
+                display: flex;
+                justify-content: center;
+                gap: 20px;
+            `;
+            
+            // 确认按钮
+            const confirmBtn = document.createElement('button');
+            confirmBtn.textContent = '确认清除';
+            confirmBtn.className = 'btn';
+            confirmBtn.style.background = 'rgba(255, 107, 107, 0.8)';
+            confirmBtn.addEventListener('click', function() {
+                // 清除所有数据
+                localStorage.removeItem('grades');
+                localStorage.removeItem('selectedSubjects');
+                localStorage.removeItem('scoreLimits');
+                localStorage.removeItem('subjectScores');
+                localStorage.removeItem('currentScoreLimitType');
+                localStorage.removeItem('currentExamTime');
+                
+                // 显示成功消息
+                const successModal = document.createElement('div');
+                successModal.style.cssText = `
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0, 0, 0, 0.7);
+                    backdrop-filter: blur(5px);
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    z-index: 1001;
+                    animation: fadeIn 0.5s ease-out;
+                `;
+                
+                const successContent = document.createElement('div');
+                successContent.style.cssText = `
+                    background: ${document.body.classList.contains('dark-mode') ? 'rgba(40, 40, 40, 0.9)' : 'rgba(255, 255, 255, 0.9)'};
+                    backdrop-filter: blur(10px);
+                    padding: 40px;
+                    border-radius: 20px;
+                    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+                    width: 90%;
+                    max-width: 400px;
+                    text-align: center;
+                    animation: slideInRight 0.5s ease-out;
+                `;
+                
+                const successMessage = document.createElement('p');
+                successMessage.textContent = '所有数据已清除！';
+                successMessage.style.cssText = `
+                    color: ${document.body.classList.contains('dark-mode') ? '#a8c0e0' : '#4a6fa5'};
+                    font-size: 18px;
+                    font-weight: bold;
+                    margin-bottom: 20px;
+                    text-shadow: ${document.body.classList.contains('dark-mode') ? '1px 1px 2px rgba(0,0,0,0.8)' : '1px 1px 2px rgba(255,255,255,0.8)'};
+                `;
+                
+                const okBtn = document.createElement('button');
+                okBtn.textContent = '确定';
+                okBtn.className = 'btn btn-primary';
+                okBtn.addEventListener('click', function() {
+                    document.body.removeChild(successModal);
+                });
+                
+                successContent.appendChild(successMessage);
+                successContent.appendChild(okBtn);
+                successModal.appendChild(successContent);
+                document.body.appendChild(successModal);
+                
+                // 移除确认弹窗
+                document.body.removeChild(modal);
+            });
+            
+            // 取消按钮
+            const cancelBtn = document.createElement('button');
+            cancelBtn.textContent = '取消';
+            cancelBtn.className = 'btn btn-primary';
+            cancelBtn.addEventListener('click', function() {
+                // 只移除弹窗，不清除数据
+                document.body.removeChild(modal);
+            });
+            
+            buttonsContainer.appendChild(confirmBtn);
+            buttonsContainer.appendChild(cancelBtn);
+            
+            // 组装弹窗
+            modalContent.appendChild(modalTitle);
+            modalContent.appendChild(modalMessage);
+            modalContent.appendChild(buttonsContainer);
+            modal.appendChild(modalContent);
+            
+            // 添加到页面
+            document.body.appendChild(modal);
+        }
+    </script>
+</body>
+</html>

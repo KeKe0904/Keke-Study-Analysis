@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>关于我们 - Keke Study Analysis</title>
+    <link rel="icon" href="icon.png" type="image/png">
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        // 加载背景图
+        function loadBackgroundImage() {
+            $.ajax({
+                url: 'https://api.yaohud.cn/api/acg/adaptive',
+                data: {
+                    key: '1bXi46YPmRrWHMSM5oI'
+                },
+                type: 'GET',
+                dataType: 'json',
+                success: function(data) {
+                    if (data && data.data && data.data.url) {
+                        document.body.style.backgroundImage = `url(${data.data.url})`;
+                    }
+                },
+                timeout: 3000,
+                error: function(data) {
+                    console.log('请求失败，使用默认背景');
+                    // 请求失败时使用默认背景
+                    document.body.style.backgroundImage = 'url(https://www.loliapi.com/acg/)';
+                }
+            });
+        }
+        
+        // 页面加载时加载背景图
+        window.addEventListener('load', loadBackgroundImage);
+    </script>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <h1>Keke Study Analysis</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="index.html">首页</a></li>
+                    <li><a href="input.html">成绩输入</a></li>
+                    <li><a href="analysis.html">成绩分析</a></li>
+                    <li><a href="settings.html">设置</a></li>
+                    <li><a href="about.html">关于我们</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    <main>
+        <section class="about-section">
+            <div class="container">
+                <h2>关于我们</h2>
+                <div class="about-content">
+                    <p>Keke Study Analysis 是一个专注于学生成绩分析的智能系统，旨在帮助学生和教师更有效地了解学习情况，发现学习中的优势和不足。</p>
+                    <h3>我们的使命</h3>
+                    <p>通过数据分析技术，为教育提供科学的决策支持，帮助学生提高学习效率，助力教师优化教学方法。</p>
+                    <h3>系统功能</h3>
+                    <ul>
+                        <li>多科目成绩输入和管理</li>
+                        <li>详细的成绩统计分析</li>
+                        <li>多种图表可视化展示</li>
+                        <li>数据导出功能</li>
+                    </ul>
+                    <h3>联系我们</h3>
+                    <p>如果您有任何问题或建议，欢迎联系我们：</p>
+                    <p>邮箱：contact@kekestudy.com</p>
+                    <p>电话：123-4567-8910</p>
+                </div>
+            </div>
+        </section>
+    </main>
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 Keke Study Analysis. 保留所有权利。</p>
+        </div>
+    </footer>
+    <script>
+        // 加载暗色模式状态
+        function loadDarkMode() {
+            const isDarkMode = localStorage.getItem('darkMode') === 'true';
+            if (isDarkMode) {
+                document.body.classList.add('dark-mode');
+            }
+        }
+        
+        // 加载字体设置
+        function loadFontSettings() {
+            const savedFont = localStorage.getItem('selectedFont') || 'SourceHanSans';
+            document.body.style.fontFamily = `${savedFont}, 'Comic Sans MS', 'Arial', sans-serif`;
+        }
+        
+        // 页面加载时检查设置
+        window.addEventListener('load', function() {
+            loadDarkMode();
+            loadFontSettings();
+            // 添加loaded类，实现平滑过渡
+            setTimeout(function() {
+                document.body.classList.add('loaded');
+            }, 100);
+        });
+        
+        // 页面开始加载时移除loaded类
+        window.addEventListener('beforeunload', function() {
+            document.body.classList.remove('loaded');
+        });
+    </script>
+</body>
+</html>

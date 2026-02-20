@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Keke Study Analysis</title>
+    <link rel="icon" href="icon.png" type="image/png">
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        // 加载背景图
+        function loadBackgroundImage() {
+            console.log('开始加载背景图');
+            $.ajax({
+                url: 'https://api.yaohud.cn/api/acg/adaptive',
+                data: {
+                    key: '1bXi46YPmRrWHMSM5oI'
+                },
+                type: 'GET',
+                dataType: 'json',
+                success: function(data) {
+                    console.log('API请求成功:', data);
+                    // 检查API返回的数据结构
+                    if (data) {
+                        if (data.data && data.data.url) {
+                            console.log('使用API返回的背景图:', data.data.url);
+                            document.body.style.backgroundImage = `url(${data.data.url})`;
+                        } else if (data.url) {
+                            console.log('使用API返回的背景图(直接url字段):', data.url);
+                            document.body.style.backgroundImage = `url(${data.url})`;
+                        } else {
+                            console.log('API返回数据结构不正确，使用默认背景');
+                            document.body.style.backgroundImage = 'url(https://www.loliapi.com/acg/)';
+                        }
+                    } else {
+                        console.log('API返回空数据，使用默认背景');
+                        document.body.style.backgroundImage = 'url(https://www.loliapi.com/acg/)';
+                    }
+                },
+                timeout: 3000,
+                error: function(xhr, status, error) {
+                    console.log('请求失败:', status, error);
+                    // 请求失败时使用默认背景
+                    document.body.style.backgroundImage = 'url(https://www.loliapi.com/acg/)';
+                }
+            });
+        }
+        
+        // 页面加载时加载背景图
+        window.addEventListener('load', loadBackgroundImage);
+    </script>
+    <script>
+        // 加载暗色模式状态
+        function loadDarkMode() {
+            const isDarkMode = localStorage.getItem('darkMode') === 'true';
+            if (isDarkMode) {
+                document.body.classList.add('dark-mode');
+            }
+        }
+        
+        // 加载字体设置
+        function loadFontSettings() {
+            const savedFont = localStorage.getItem('selectedFont') || 'SourceHanSans';
+            document.body.style.fontFamily = `${savedFont}, 'Comic Sans MS', 'Arial', sans-serif`;
+        }
+        
+        // 页面加载时检查设置
+        window.addEventListener('load', function() {
+            loadDarkMode();
+            loadFontSettings();
+            // 添加loaded类，实现平滑过渡
+            setTimeout(function() {
+                document.body.classList.add('loaded');
+            }, 100);
+        });
+        
+        // 页面开始加载时移除loaded类
+        window.addEventListener('beforeunload', function() {
+            document.body.classList.remove('loaded');
+        });
+    </script>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <h1>Keke Study Analysis</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="index.html">首页</a></li>
+                    <li><a href="input.html">成绩输入</a></li>
+                    <li><a href="analysis.html">成绩分析</a></li>
+                    <li><a href="settings.html">设置</a></li>
+                    <li><a href="about.html">关于我们</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    <main>
+        <section class="hero">
+            <div class="container">
+                <h2>智能成绩分析系统</h2>
+                <p>快速分析你的学习成绩，获取详细的数据分析报告</p>
+                <a href="input.html" class="btn">开始分析</a>
+            </div>
+        </section>
+        <section class="features">
+            <div class="container">
+                <h3>系统功能</h3>
+                <div class="feature-grid">
+                    <div class="feature-item">
+                        <h4>多科目分析</h4>
+                        <p>支持多个科目的成绩输入和分析</p>
+                    </div>
+                    <div class="feature-item">
+                        <h4>详细数据统计</h4>
+                        <p>计算最高分、最低分、平均分等关键指标</p>
+                    </div>
+                    <div class="feature-item">
+                        <h4>可视化图表</h4>
+                        <p>通过多种图表展示成绩分布和趋势</p>
+                    </div>
+                    <div class="feature-item">
+                        <h4>数据导出</h4>
+                        <p>支持将分析结果导出为Excel或PDF格式</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 Keke Study Analysis. 保留所有权利。</p>
+        </div>
+    </footer>
+</body>
+</html>

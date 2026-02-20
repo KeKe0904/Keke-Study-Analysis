@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>成绩输入 - Keke Study Analysis</title>
+    <link rel="icon" href="icon.png" type="image/png">
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        // 加载背景图
+        function loadBackgroundImage() {
+            $.ajax({
+                url: 'https://api.yaohud.cn/api/acg/adaptive',
+                data: {
+                    key: '1bXi46YPmRrWHMSM5oI'
+                },
+                type: 'GET',
+                dataType: 'json',
+                success: function(data) {
+                    if (data && data.data && data.data.url) {
+                        document.body.style.backgroundImage = `url(${data.data.url})`;
+                    }
+                },
+                timeout: 3000,
+                error: function(data) {
+                    console.log('请求失败，使用默认背景');
+                    // 请求失败时使用默认背景
+                    document.body.style.backgroundImage = 'url(https://www.loliapi.com/acg/)';
+                }
+            });
+        }
+        
+        // 页面加载时加载背景图
+        window.addEventListener('load', loadBackgroundImage);
+    </script>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <h1>Keke Study Analysis</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="index.html">首页</a></li>
+                    <li><a href="input.html">成绩输入</a></li>
+                    <li><a href="analysis.html">成绩分析</a></li>
+                    <li><a href="settings.html">设置</a></li>
+                    <li><a href="about.html">关于我们</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    <main>
+        <section class="input-section">
+            <div class="container">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; flex-wrap: wrap; gap: 15px;">
+                    <h2>成绩输入</h2>
+                    <div style="display: flex; gap: 15px; align-items: center;">
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label for="score-limit">分数限制</label>
+                            <select id="score-limit" name="score-limit" class="btn" style="padding: 8px 16px; border-radius: 20px; border: none; background: rgba(74, 111, 165, 0.8); color: white; cursor: pointer;">
+                                <option value="default">默认（语数外150，其他100）</option>
+                                <option value="120-100">语数外120，其他100</option>
+                                <option value="custom-1">语数外120，政60历50物70化60生地40</option>
+                                <option value="custom-2">自定义最高分数</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label for="exam-time">考试时间</label>
+                            <select id="exam-time" name="exam-time" class="btn" style="padding: 8px 16px; border-radius: 20px; border: none; background: rgba(255, 107, 157, 0.8); color: white; cursor: pointer;">
+                                <!-- 动态生成的选项 -->
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <form id="score-form">
+                    <div class="form-group">
+                        <label for="subject">科目</label>
+                        <input type="text" id="subject" name="subject" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="scores">成绩（用逗号分隔）</label>
+                        <input type="text" id="scores" name="scores" placeholder="例如：85,90,78,92,88" required>
+                    </div>
+                    <div class="form-group">
+                        <button type="button" id="add-subject" class="btn">添加科目</button>
+                    </div>
+                    <div id="subject-list" class="subject-list">
+                        <!-- 动态添加的科目列表 -->
+                    </div>
+                    <div style="display: flex; gap: 15px; justify-content: center;">
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <button type="submit" class="btn btn-primary">分析成绩</button>
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <button type="button" id="reset-subjects" class="btn">重新选择科目</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </main>
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 Keke Study Analysis. 保留所有权利。</p>
+        </div>
+    </footer>
+    <script>
+        // 加载暗色模式状态
+        function loadDarkMode() {
+            const isDarkMode = localStorage.getItem('darkMode') === 'true';
+            if (isDarkMode) {
+                document.body.classList.add('dark-mode');
+            }
+        }
+        
+        // 加载字体设置
+        function loadFontSettings() {
+            const savedFont = localStorage.getItem('selectedFont') || 'SourceHanSans';
+            document.body.style.fontFamily = `${savedFont}, 'Comic Sans MS', 'Arial', sans-serif`;
+        }
+        
+        // 页面加载时检查设置
+        window.addEventListener('load', function() {
+            loadDarkMode();
+            loadFontSettings();
+            // 添加loaded类，实现平滑过渡
+            setTimeout(function() {
+                document.body.classList.add('loaded');
+            }, 100);
+        });
+        
+        // 页面开始加载时移除loaded类
+        window.addEventListener('beforeunload', function() {
+            document.body.classList.remove('loaded');
+        });
+    </script>
+    <script src="js/input.js"></script>
+</body>
+</html>

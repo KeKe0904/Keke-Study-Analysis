@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>成绩分析 - Keke Study Analysis</title>
+    <link rel="icon" href="icon.png" type="image/png">
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        // 加载背景图
+        function loadBackgroundImage() {
+            $.ajax({
+                url: 'https://api.yaohud.cn/api/acg/adaptive',
+                data: {
+                    key: '1bXi46YPmRrWHMSM5oI'
+                },
+                type: 'GET',
+                dataType: 'json',
+                success: function(data) {
+                    if (data && data.data && data.data.url) {
+                        document.body.style.backgroundImage = `url(${data.data.url})`;
+                    }
+                },
+                timeout: 3000,
+                error: function(data) {
+                    console.log('请求失败，使用默认背景');
+                    // 请求失败时使用默认背景
+                    document.body.style.backgroundImage = 'url(https://www.loliapi.com/acg/)';
+                }
+            });
+        }
+        
+        // 页面加载时加载背景图
+        window.addEventListener('load', loadBackgroundImage);
+    </script>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <h1>Keke Study Analysis</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="index.html">首页</a></li>
+                    <li><a href="input.html">成绩输入</a></li>
+                    <li><a href="analysis.html">成绩分析</a></li>
+                    <li><a href="settings.html">设置</a></li>
+                    <li><a href="about.html">关于我们</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    <main>
+        <section class="analysis-section">
+            <div class="container">
+                <h2>成绩分析报告</h2>
+                <div id="analysis-results">
+                    <!-- 动态生成的分析结果 -->
+                    <div class="no-data">
+                        <p>暂无分析数据，请先输入成绩</p>
+                        <a href="input.html" class="btn">前往输入</a>
+                    </div>
+                </div>
+                <div class="charts-container">
+                    <!-- 动态生成的图表 -->
+                </div>
+            </div>
+        </section>
+    </main>
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 Keke Study Analysis. 保留所有权利。</p>
+        </div>
+    </footer>
+    <script>
+        // 加载暗色模式状态
+        function loadDarkMode() {
+            const isDarkMode = localStorage.getItem('darkMode') === 'true';
+            if (isDarkMode) {
+                document.body.classList.add('dark-mode');
+            }
+        }
+        
+        // 加载字体设置
+        function loadFontSettings() {
+            const savedFont = localStorage.getItem('selectedFont') || 'SourceHanSans';
+            document.body.style.fontFamily = `${savedFont}, 'Comic Sans MS', 'Arial', sans-serif`;
+        }
+        
+        // 页面加载时检查设置
+        window.addEventListener('load', function() {
+            loadDarkMode();
+            loadFontSettings();
+            // 添加loaded类，实现平滑过渡
+            setTimeout(function() {
+                document.body.classList.add('loaded');
+            }, 100);
+        });
+        
+        // 页面开始加载时移除loaded类
+        window.addEventListener('beforeunload', function() {
+            document.body.classList.remove('loaded');
+        });
+    </script>
+    <script src="js/analysis.js"></script>
+</body>
+</html>
